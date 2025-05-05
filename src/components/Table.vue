@@ -128,13 +128,27 @@ function generateNIE() {
   const remainder = fullNumber % 23
   console.log(`前缀数字: ${prefixNumber}, 余数: ${remainder}`)
   
-  const controlLetter = 'TRWAGMYFPDXBNJZSQVHLCKE'[remainder]
+  const controlLetter = DNI_LETTER_MAP[remainder]
 
   // 4. 组合最终结果
   const nie = `${prefix}${numbers}${controlLetter}`
 
   // 结果输出与复制功能
   fullNie.value = nie
+}
+
+const multipleDni = ref<string[]>([]) // 存储 100 个随机生成的 DNI
+
+function generateMultipleDNI() {
+  const dniList: string[] = []
+  for (let i = 0; i < 100; i++) {
+    const randomNumber = Math.floor(Math.random() * 100000000)
+      .toString()
+      .padStart(8, '0') // 强制补足8位
+    const checkLetter = calculateCheckDigit(randomNumber)
+    dniList.push(randomNumber + checkLetter)
+  }
+  multipleDni.value = dniList // 更新结果
 }
 
 </script>
@@ -159,6 +173,18 @@ function generateNIE() {
         <el-button v-if="fullDni" size="large" @click="copyToClipboard(fullDni)">
           复制
         </el-button>
+      </div>
+    </div>
+
+    <div class="center-bg my-2" v-if="false">
+      <el-button size="large" type="primary" @click="generateMultipleDNI()">
+        随机生成 100 个 DNI
+      </el-button>
+      <div v-if="multipleDni.length" class="result-list">
+        <h3>随机生成的 100 个 DNI:</h3>
+        <ul>
+          <li v-for="(dni, index) in multipleDni" :key="index">{{ dni }}</li>
+        </ul>
       </div>
     </div>
 
