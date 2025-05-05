@@ -24,8 +24,8 @@ npm run build
 ## Usage
 
 ```bash
-git clone https://github.com/0x0BB9/will-browser-data
-cd will-browser-data
+git clone https://github.com/0x0BB9/will-dni-builder.git
+cd will-dni-builder
 npm i
 npm run dev
 ```

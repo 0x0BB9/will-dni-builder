@@ -1,13 +1,13 @@
 {
-  "name": "will-browser-data-demo",
+  "name": "will-dni-builder",
   "type": "module",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "license": "MIT",
-  "homepage": "https://0x0bb9.github.io/will-browser-data",
+  "homepage": "https://github.com/0x0BB9/will-dni-builder.git",
   "repository": {
-    "url": "https://github.com/0x0BB9/will-browser-data"
+    "url": "https://github.com/0x0BB9/will-dni-builder.git"
   },
   "scripts": {
     "dev": "vite",
