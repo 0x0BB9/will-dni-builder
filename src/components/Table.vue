@@ -127,7 +127,7 @@ function generateNIE() {
   const fullNumber = Number.parseInt(prefixNumber + numbers)
   const remainder = fullNumber % 23
   console.log(`前缀数字: ${prefixNumber}, 余数: ${remainder}`)
-  
+
   const controlLetter = DNI_LETTER_MAP[remainder]
 
   // 4. 组合最终结果
@@ -149,6 +149,24 @@ function generateMultipleDNI() {
     dniList.push(randomNumber + checkLetter)
   }
   multipleDni.value = dniList // 更新结果
+}
+
+const fullIban = ref('') // 存储生成的 IBAN
+
+function generateRandomIBAN() {
+  const countryCode = 'ES' // 西班牙国家代码
+  const bankCode = Math.floor(Math.random() * 10000).toString().padStart(4, '0') // 银行代码
+  const branchCode = Math.floor(Math.random() * 10000).toString().padStart(4, '0') // 分行代码
+  const accountNumber = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0') // 账户号码
+
+  // 计算校验位
+  const checkDigitsBase = `${bankCode}${branchCode}${accountNumber}${countryCode}00`
+  const numericIBAN = checkDigitsBase
+    .replace(/[A-Z]/g, (char) => (char.charCodeAt(0) - 55).toString()) // 替换字母为数字
+  const checkDigits = (98n - BigInt(numericIBAN) % 97n).toString().padStart(2, '0') // 计算校验位
+
+  // 组合最终 IBAN
+  fullIban.value = `${countryCode}${checkDigits}${bankCode}${branchCode}${accountNumber}`
 }
 
 </script>
@@ -204,6 +222,20 @@ function generateMultipleDNI() {
           NIE: {{ fullNie }}
         </h2>
         <el-button v-if="fullNie" size="large" @click="copyToClipboard(fullNie)">
+          复制
+        </el-button>
+      </div>
+    </div>
+
+    <div class="center-bg my-2">
+      <div class="center-h">
+        <el-button size="large" type="primary" @click="generateRandomIBAN()">
+          随机生成一个西班牙 IBAN
+        </el-button>
+      </div>
+      <div v-if="fullIban" class="center-h">
+        <h2 m-2>IBAN: {{ fullIban }}</h2>
+        <el-button size="large" @click="copyToClipboard(fullIban)">
           复制
         </el-button>
       </div>
