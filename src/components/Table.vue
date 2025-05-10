@@ -162,7 +162,7 @@ function generateRandomIBAN() {
   // 计算校验位
   const checkDigitsBase = `${bankCode}${branchCode}${accountNumber}${countryCode}00`
   const numericIBAN = checkDigitsBase
-    .replace(/[A-Z]/g, (char) => (char.charCodeAt(0) - 55).toString()) // 替换字母为数字
+    .replace(/[A-Z]/g, char => (char.charCodeAt(0) - 55).toString()) // 替换字母为数字
   const checkDigits = (98n - BigInt(numericIBAN) % 97n).toString().padStart(2, '0') // 计算校验位
 
   // 组合最终 IBAN
@@ -194,14 +194,16 @@ function generateRandomIBAN() {
       </div>
     </div>
 
-    <div class="center-bg my-2" v-if="false">
+    <div class="center-bg my-2">
       <el-button size="large" type="primary" @click="generateMultipleDNI()">
         随机生成 100 个 DNI
       </el-button>
       <div v-if="multipleDni.length" class="result-list">
         <h3>随机生成的 100 个 DNI:</h3>
         <ul>
-          <li v-for="(dni, index) in multipleDni" :key="index">{{ dni }}</li>
+          <li v-for="(dni, index) in multipleDni" :key="index">
+            {{ dni }}
+          </li>
         </ul>
       </div>
     </div>
@@ -234,7 +236,9 @@ function generateRandomIBAN() {
         </el-button>
       </div>
       <div v-if="fullIban" class="center-h">
-        <h2 m-2>IBAN: {{ fullIban }}</h2>
+        <h2 m-2>
+          IBAN: {{ fullIban }}
+        </h2>
         <el-button size="large" @click="copyToClipboard(fullIban)">
           复制
         </el-button>
