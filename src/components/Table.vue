@@ -17,6 +17,7 @@ const input = ref('')
 const fullDni = ref('')
 
 const inputNie = ref('')
+const inputBankCode = ref('')
 const fullNie = ref('')
 
 // 定义 loading 状态和 networkInfo 数据
@@ -154,19 +155,30 @@ function generateMultipleDNI() {
 const fullIban = ref('') // 存储生成的 IBAN
 
 function generateRandomIBAN() {
-  const countryCode = 'ES' // 西班牙国家代码
-  const bankCode = Math.floor(Math.random() * 10000).toString().padStart(4, '0') // 银行代码
-  const branchCode = Math.floor(Math.random() * 10000).toString().padStart(4, '0') // 分行代码
-  const accountNumber = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0') // 账户号码
+  const countryCode = 'ES'
+  // 优先使用用户输入的银行代码，否则随机生成
+  const bankCode = inputBankCode.value
+    ? inputBankCode.value.padStart(4, '0')
+    : Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+  const branchCode = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+  const controlCode = Math.floor(Math.random() * 100).toString().padStart(2, '0') // 2位校验码
+  const accountNumber = Math.floor(Math.random() * 1000000000).toString().padStart(10, '0') // 10位
 
-  // 计算校验位
-  const checkDigitsBase = `${bankCode}${branchCode}${accountNumber}${countryCode}00`
-  const numericIBAN = checkDigitsBase
-    .replace(/[A-Z]/g, char => (char.charCodeAt(0) - 55).toString()) // 替换字母为数字
-  const checkDigits = (98n - BigInt(numericIBAN) % 97n).toString().padStart(2, '0') // 计算校验位
+  // BBAN: 银行代码 + 分行代码 + 校验码 + 账户号码
+  const bban = `${bankCode}${branchCode}${controlCode}${accountNumber}`
 
-  // 组合最终 IBAN
-  fullIban.value = `${countryCode}${checkDigits}${bankCode}${branchCode}${accountNumber}`
+  // IBAN 校验位计算
+  const rearranged = `${bban}${countryCode}00`
+  const numericIBAN = rearranged.replace(/[A-Z]/g, char => (char.charCodeAt(0) - 55).toString())
+  const checkDigits = (98n - BigInt(numericIBAN) % 97n).toString().padStart(2, '0')
+
+  // 最终 IBAN
+  fullIban.value = `${countryCode}${checkDigits}${bban}`
+
+  // 校验长度
+  if (fullIban.value.length !== 24) {
+    console.error('IBAN长度错误:', fullIban.value)
+  }
 }
 
 </script>
@@ -231,6 +243,7 @@ function generateRandomIBAN() {
 
     <div class="center-bg my-2">
       <div class="center-h">
+        <el-input v-model="inputBankCode" class="m-2" size="large" placeholder="输入四位银行代码" style="width: 200px" maxlength="4" />
         <el-button size="large" type="primary" @click="generateRandomIBAN()">
           随机生成一个西班牙 IBAN
         </el-button>
